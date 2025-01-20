@@ -1,0 +1,14 @@
+.row-spacing {
+    margin: 3px;
+  }
+.popover-content {
+  width: 220px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.vc-day-content {
+  width: 28px !important;
+  height: 28px !important;
+}

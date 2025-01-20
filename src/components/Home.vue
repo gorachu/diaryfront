@@ -6,9 +6,5 @@
 </template>
 
 <script setup>
-// Здесь можно добавить логику компонента
 </script>
 
-<style scoped>
-/* Стили для главной страницы */
-</style> 

@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-// Здесь можно добавить логику компонента
 </script>
 
 <style scoped>
