@@ -154,10 +154,9 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 function goToTrainingPage(date){
-  router.push(`/date/${date.year}-${date.month}-${date.day}`)
+  router.push(`/calendar/${date.year}-${date.month}-${date.day}`)
 }
 function onDateSelected(day) {
   selectedDate.value = day.date;
-  console.log('Выбранная дата:', day.date);
 }
 </script>

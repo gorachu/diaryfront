@@ -12,3 +12,130 @@
   width: 28px !important;
   height: 28px !important;
 }
+.trainings-holder {
+  width: 500px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  user-select: none;
+}
+.single-training-holder {
+  padding: 20px;
+  text-align: center;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.single-training-holder:hover {
+  border-color: #4CAF50;
+  transform: scale(1.1); /* Увеличение элемента */
+}
+.trainings-header {
+  padding: 10px;
+  margin: 10px;
+  background-color: #61d8a3a1;
+  border-radius: 15px;
+  user-select: none;
+}
+.training-time-header {
+  padding: 10px;
+  margin: 3px;
+  background-color:#61d8a3a1;
+  border-radius: 15px;
+}
+.exercise-holder {
+  padding: 10px;
+  margin: 3px;
+  background-color:#61d8a3a1;
+  border-radius: 15px;
+}
+.exercsise-info {
+  padding: 10px;
+  margin: 3px;
+  background-color: white;
+  border-radius: 15px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.custom-marker {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #61d8a3a1;
+}
+.header-button-container {
+  display: inline-flex;
+  align-items: center;
+}
+.edit-button{
+  margin-left: 10px;
+  user-select: none;
+  background-color: rgb(220, 255, 221);
+}
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.align-to-center{
+  display: flex;
+  align-items: center;
+}
+.training-holder{
+  width: 500px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  user-select: none;
+}
+.title{
+  width: 100px;
+  padding: 10px;
+  margin-right: 10px !important;
+}
+.box {
+  width: 80px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), inset 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+.round-box {
+  padding: 10px;
+  border:2px solid #4CAF50;
+  border-radius: 60px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  user-select: none;
+}
+
+.outline-scale:active{
+  outline: none;
+  transform: scale(0.95);
+}
+.justify-center {
+  justify-content: center;
+  align-items: center;
+}
+.custom-width {
+  width: 70px;
+}

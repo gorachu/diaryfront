@@ -5,6 +5,7 @@ import DatePage from '../components/DatePage.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import UserTable from '../components/UserTable.vue'
+import TrainingPage from '../components/TrainingPage.vue'
 
 const routes = [
   {
@@ -18,9 +19,14 @@ const routes = [
     component: Calendar
   },
   {
-    path: '/date/:date',
+    path: '/calendar/:date',
     name: 'DatePage',
     component: DatePage
+  },
+  {
+    path: '/calendar/:date/:time',
+    name: 'TrainingPage',
+    component: TrainingPage
   },
   {
     path: '/login',
