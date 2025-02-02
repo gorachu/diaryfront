@@ -1,6 +1,11 @@
 <template>
   <div class="training-holder">
-    <h2 class="trainings-header">Тренировка в:</h2>
+    <h2 class="trainings-header">Тренировка:</h2>
+    <div>
+      <ul>
+        
+      </ul>
+    </div>
   </div>
   <RepAdder 
   :handleAddButton="addSet"

@@ -26,6 +26,7 @@
   border: 2px solid transparent;
   border-radius: 10px;
   transition: transform 0.3s, border-color 0.3s;
+  background-color: white;
 }
 .single-training-holder:hover {
   border-color: #4CAF50;
@@ -135,6 +136,8 @@
 .justify-center {
   justify-content: center;
   align-items: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .custom-width {
   width: 70px;

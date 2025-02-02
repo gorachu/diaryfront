@@ -1,0 +1,25 @@
+.swiper-container {
+    width: 500px;
+    height: 700px;
+    margin: 0 auto;
+    border: 2px solid #4CAF50;
+    border-radius: 15px;
+}
+  
+.card {
+    position: absolute;
+    width: 500px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+    margin:0 auto;
+}
