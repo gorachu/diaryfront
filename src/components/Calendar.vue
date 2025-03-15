@@ -22,16 +22,20 @@
     </template>
     <template #day-popover="{day, attributes}">
       <div class="popover-content">
-        <div v-if="attributes.length > 0">
-          <div v-for="data in attributes[0].customData" :key="data.key">
-            <div v-if="data.key === formatDate(day.date)">
-              <h4>Тренировки за {{ data.key }}:</h4>
-              <ul>
-                <li v-for="(training, index) in data.trainings" :key="index">{{ training }}</li>
-              </ul>
+        <div v-for="attr in attributes" :key="attr.key">
+          <div v-if="attr.key === 'training-days'">
+            <div v-for="data in attr.customData.days">
+              <div v-if="data.date === formatDate(day.date)">
+                <h4>Тренировки за {{data.date}}:</h4>
+                  <ul>
+                    <li v-for="workoutsTiming in data.workoutsTimings">
+                      {{ workoutsTiming.startTime + " - " + workoutsTiming.endTime }}                    
+                    </li>
+                  </ul>
+              </div>
             </div>
           </div>
-        </div>    
+        </div>   
         <button 
                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold w-full px-3 py-1 rounded-md"
                 @click="goToTrainingPage(day)"
@@ -51,6 +55,7 @@ const router = useRouter()
 const calendarView = ref("monthly");
 const calendar = ref(null);
 const jsontrainings = ref([]);
+const dates = ref([])
 onMounted(async () => {
   try {
     const response = await fetch('https://localhost:8443/calendar', {
@@ -64,9 +69,17 @@ onMounted(async () => {
     if (!response.ok) {
       throw new Error('Ошибка загрузки пользователей')
     }
+    const responseData = await response.json();
+    console.log("Полученные данные:", responseData);
 
-    jsontrainings.value = await response.json()
-    console.log(jsontrainings.value);
+    if (responseData.days && Array.isArray(responseData.days)) {
+      jsontrainings.value = responseData;
+      console.log("jsontrainings:", jsontrainings.value);
+      dates.value = responseData.days.map(item => item.date);
+      console.log("Даты:", dates.value);
+    } else {
+      console.error("Ошибка формата данных: нет массива days");
+    }
   } catch (error) {
     console.error('Ошибка:', error)
   }
@@ -89,8 +102,8 @@ const attrs = ref([
       isInteractive: true,
       hideIndicator: true,
     },
-    dates: jsontrainings.data,
-    customData: jsontrainings.customData,
+    dates: dates.value,
+    customData: jsontrainings.value,
   },
   {
     key: 'selectedDate',
@@ -121,11 +134,16 @@ watch(selectedDate, (newDate) => {
     selectedDateAttr.dates = [new Date(newDate)];
   }
 });
+watch(dates, (newDates) => {
+  const trainingAttr = attrs.value.find(attr => attr.key === 'training-days');
+  if (trainingAttr) {
+    trainingAttr.dates = newDates;
+  }
+});
 watch(jsontrainings, (newJsontrainings) => {
-  const jsontrainingsAttr = attrs.value.find(attr => attr.key === 'training-days');
-  if (jsontrainingsAttr) {
-    jsontrainingsAttr.dates = newJsontrainings.data;
-    jsontrainingsAttr.customData = newJsontrainings.customData;
+  const trainingAttr = attrs.value.find(attr => attr.key === 'training-days');
+  if (trainingAttr) {
+    trainingAttr.customData = newJsontrainings;
   }
 });
 function changeCalendarView(){
@@ -154,7 +172,7 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 function goToTrainingPage(date){
-  router.push(`/calendar/${date.year}-${date.month}-${date.day}`)
+  router.push(`/calendar/${date.id}`);
 }
 function onDateSelected(day) {
   selectedDate.value = day.date;

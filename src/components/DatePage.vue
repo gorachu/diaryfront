@@ -7,8 +7,8 @@
           <button class="edit-button" @click="editClick(data.time)">Редактировать</button>
         </div>
         <ul class="exercise-holder">
-          <li class="exercsise-info" v-for="(training, index) in data.sets" :key="index">
-            <span class="custom-marker"></span>{{ training }}
+          <li class="exercsise-info" v-for="(training, index) in data.workoutExercises" :key="index">
+            <span class="custom-marker"></span>{{ training.exerciseName }}
           </li>
         </ul>
       </div>
