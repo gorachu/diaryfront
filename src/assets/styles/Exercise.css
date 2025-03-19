@@ -1,6 +1,6 @@
 .training-holder {
     width: 500px;
-    height: 700px;
+    height: 500px;
     padding: 10px;
     background-color: white;
     border-radius: 12px;
@@ -11,12 +11,6 @@
   
     display: flex;
     flex-direction: column;
-}
-
-.trainings-header {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 16px;
 }
 
 .scrolable-container {
@@ -91,3 +85,27 @@ ul {
     font-size: 14px;
     color: #555;
 }
+.set-item-addition{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.set-deletion {
+    margin-left: auto;
+    background: rgb(187, 187, 187);
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+.set-deletion:hover {
+    background: rgb(138, 138, 138);
+}
+.modal__action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 1rem 0 0;
+    margin-top: 5px;
+  }

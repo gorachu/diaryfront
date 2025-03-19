@@ -24,7 +24,7 @@ const routes = [
     component: DatePage
   },
   {
-    path: '/calendar/:date/:time',
+    path: '/calendar/:date/:workoutId',
     name: 'TrainingPage',
     component: TrainingPage
   },

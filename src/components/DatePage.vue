@@ -1,13 +1,13 @@
 <template>
   <div class="trainings-holder">
     <h2 class="trainings-header">Тренировки за: {{ formattedDate }}</h2>
-      <div class="single-training-holder" v-for="data in jTrainings.trainingsInDay" :key="data.key">
+      <div class="single-training-holder" v-for="data in jTrainings.trainingsInDay">
         <div class="header-button-container">  
           <h4 class="training-time-header">{{ data.timeStart }} - {{ data.timeEnd }}</h4>
-          <button class="edit-button" @click="editClick(data.time)">Редактировать</button>
+          <button class="edit-button" @click="editClick(data.workoutId)">Редактировать</button>
         </div>
         <ul class="exercise-holder">
-          <li class="exercsise-info" v-for="(training, index) in data.workoutExercises" :key="index">
+          <li class="exercsise-info" v-for="training in data.workoutExercises">
             <span class="custom-marker"></span>{{ training.exerciseName }}
           </li>
         </ul>
@@ -49,7 +49,7 @@ if (date.getFullYear() === currentYear) {
 } else {
   formattedDate = format(date, 'd MMMM yyyy', { locale: ru })
 }
-function editClick(time){
-  router.push(`${route.fullPath}/${time}`)
+function editClick(workoutId) {
+  router.push(`${route.fullPath}/${workoutId}`);
 }
 </script>

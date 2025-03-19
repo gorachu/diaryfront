@@ -38,6 +38,19 @@
   background-color: #61d8a3a1;
   border-radius: 15px;
   user-select: none;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+.add-exercise-header {
+  padding: 10px;
+  margin: 10px;
+  background-color: #61d8a3a1;
+  border-radius: 15px;
+  user-select: none;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
 }
 .training-time-header {
   padding: 10px;
@@ -66,7 +79,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: #61d8a3a1;
+  background-color: #60d7a2a1;
 }
 .header-button-container {
   display: inline-flex;
@@ -140,6 +153,11 @@
   border-radius: 60px;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
   user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 250px;
+  max-height: 280px;
 }
 
 .outline-scale:active{
@@ -154,4 +172,93 @@
 }
 .custom-width {
   width: 70px;
+}
+.selected-options{
+  align-items: center;
+  justify-content: center;
+  width: 270px;
+}
+.custom-button-width{
+  width: 270px;
+}
+.add-button-container{
+  display: flex;
+  justify-content: flex-end;
+}
+.circle-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: white;
+}
+.circle-button:hover{
+  transform: scale(1.05);
+}
+
+.circle-button img {
+  height: 50px;
+  object-fit: cover;
+}
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  width: 500px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  position: relative;
+  max-height: 760px;
+  min-height: 760px;
+  height: 100%;
+  overflow: auto;
+}
+.modal-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  margin: 8px 8px 0 0;
+  cursor: pointer;
+}
+.modal-close:hover {
+  color: gray;
+}
+.title-choose-exercise{
+  margin-right: 5px;
+}
+.add-sets-holder{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+.rep-adder-holder{
+  margin-top: auto;
+}
+.custom-hight{
+  height: 100%;
+  max-height: 600px;
+}
+.sets-container{
+  max-height: 280px;
+  margin-bottom: 5px;
+}
+.sets-holder{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
 }
