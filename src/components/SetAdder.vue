@@ -1,6 +1,6 @@
 <template>
   <div class="round-box">
-    <div v-if="showWeight" class="column">
+    <div v-if="showWeight && !isHidden" class="column">
       <div class="row justify-center">
         <p class="title">Вес:</p>
         <div class="column">      
@@ -22,7 +22,7 @@
       </div>
     </div>
 
-    <div v-if="showAmount" class="column">
+    <div v-if="showAmount && !isHidden" class="column">
       <div class="row justify-center">
         <p class="title">Повторения:</p>      
         <div class="column">
@@ -46,7 +46,8 @@
       </div>
     </div>
     <div class="row justify-center">
-      <button class="align-to-front center outline-scale custom-button-width" @click="handleAddButton">Добавить подход</button>
+      <button v-if="!isHidden" class="align-to-front center outline-scale" @click="handleAddButton">Добавить подход</button>
+      <button class="align-to-front center outline-scale" @click="hideRepAdder">Скрыть</button>
     </div>
   </div>
 </template>
@@ -80,6 +81,7 @@ const amountDelta = ref(1);
 const weightOptions = [1.25, 2.5, 5, 10, 15, 20, 25];
 const amountOptions = [1, 5, 10, 20, 50, 100];
 
+const isHidden = ref(false);
 function addWeight(weight){
   if(weightTotal.value + weight > 0){
     weightTotal.value += weight;
@@ -109,5 +111,8 @@ function validateAmount() {
   if (amountTotal.value < 0 || typeof amountTotal.value != "number") {
       amountTotal.value = 0;
   }
+}
+function hideRepAdder() {
+  isHidden.value = !isHidden.value;
 }
 </script>

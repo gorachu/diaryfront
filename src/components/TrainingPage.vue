@@ -9,6 +9,9 @@
               <span class="exercise-number">{{ index + 1 }}.</span>
               <span class="exercise-name">{{ exercise.exerciseName }}</span>
               <span class="exercise-details">{{ countSetsAmount(exercise.sets) }} подходов</span>
+              <button class="edit-workout-exercise-button" @click.stop="editWorkoutExercise(exercise)">
+                <img src="/src/assets/icons/edit_button.svg" alt="edit button">
+              </button>
             </div>
             <ul v-if="expandedIndex === index" class="sets-list">
               <li 
@@ -24,83 +27,44 @@
         </ul>
       </div>
       <div class="add-button-container">
-        <button class="circle-button" @click="isModalOpen = true">
+        <button class="circle-button" @click="openModal('Добавить  упражнения', 'Сохранить', 'Отменить')">
           <img src="/src/assets/icons/add_button.svg" alt="Добавить" />
         </button>
-        <vue-final-modal
-          v-model="isModalOpen"
-          classes="modal-container"
-          content-class="modal-content"
-        >
-          <h2 class="add-exercise-header">Добавление упражнения</h2>
-          <div class="column custom-hight">
-            <div class="row justify-center">
-              <span class="title-choose-exercise"> Выбранное упражнение:</span>
-              <vue3-select
-                v-model="selectedOption"
-                :options="dropdownOptions"
-                label="name"
-                placeholder="Выберите вариант"
-                :clearable="false"
-                class="selected-options"
-              />
-            </div>
-            <div class="add-sets-holder">
-              <div class="sets-container">
-                <div class="scrolable-container sets-holder">
-                  <ul class="sets-list sets-list-additional">
-                    <li 
-                      v-for="(set, setIndex) in currentExerciseSets" 
-                      :key="setIndex" 
-                      class="set-item set-item-addition"
-                    >
-                      <span class="set-item-number">{{ setIndex + 1 }}.</span>
-                      <span class="set-details">{{ set.weight }} кг x {{ set.repetitions }} раз</span>
-                      <button class="set-deletion" @click=deleteSetFromCurrent(setIndex) title="Удалить этот подход"> x</button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div v-if="selectedOption"class="rep-adder-holder">
-                <RepAdder 
-                  :handleAddButton="addSet"
-                  v-model:weightTotal="weightTotal"
-                  v-model:amountTotal="amountTotal"
-                  :showWeight="true"
-                  :showAmount="true"
-                  :dropdownOptions="jsonExercises.listOfExercises"
-                  />
-              </div>
-            </div>
-          </div>
-          <button class="modal-close" @click="isModalOpen = false">
-            x
-          </button>
-          <div class="modal__action">
-            <button class="vfm-btn" @click="confirmSets">Сохранить</button>
-            <button class="vfm-btn" @click="cancel">Отменить</button>
-          </div>
-        </vue-final-modal>
+        <ExerciseModal
+          v-model:modelValue="isModalOpen"
+          v-model:selectedOption="selectedOption"
+          :modalTitle="modalTitle"
+          :confirmText="confirmText"
+          :cancelText="cancelText"
+          v-model:dropdownOptions="dropdownOptions"
+          v-model:currentExerciseSets="currentExerciseSets"
+          :handleConfirm="confirmSets"
+          :handleCancel="cancel"
+          v-model:showDeleteButton="showDeleteButton"
+          :handleDeleteButton="deleteExerciseFromWorkout"
+        />
       </div>
     </div>
   </div>
 </template>
 <script setup>
 import '../assets/styles/Exercise.css';
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import { useRoute } from 'vue-router';
-import Vue3Select from 'vue3-select';
 import 'vue3-select/dist/vue3-select.css';
-import RepAdder from './SetAdder.vue';
+import ExerciseModal from './ExerciseModal.vue';
 const route = useRoute();
 const jsonExercises = ref([]);
-const weightTotal = ref(0);
-const amountTotal = ref(0);
 const selectedOption = ref(null);
 const dropdownOptions = ref([]);
-const isModalOpen = ref(false); 
+const isModalOpen = ref(false);
 const currentExerciseSets = ref([])
 const expandedIndex = ref(null);
+const modalTitle = ref('');
+const confirmText = ref('');
+const cancelText = ref('');
+const showDeleteButton = ref(false);
+const exerciseRef = ref(null);
 const toggleSet = (index) => {
   if (expandedIndex.value === index) {
     expandedIndex.value = null;
@@ -108,7 +72,12 @@ const toggleSet = (index) => {
     expandedIndex.value = index;
   }
 };
-onMounted(async () => {
+
+onMounted(async () =>{
+  loadTrainings();
+})
+
+async function loadTrainings() {
   try {
     const response = await fetch(`https://localhost:8443/calendar/${route.params.date}/${route.params.workoutId}`,  {
       method: 'GET',
@@ -126,19 +95,6 @@ onMounted(async () => {
   } catch (error){
     console.error('Ошибка:', error);
   }
-})
-function addSet(){
-  if(!selectedOption.value){
-    console.error("exercise is not selected");
-    return
-  } else if (amountTotal.value <= 0 || weightTotal.value <= 0){
-    console.error("amount and weight must be positive")
-    return
-  }
-  currentExerciseSets.value.push({
-    weight: weightTotal.value,
-    repetitions: amountTotal.value
-  });
 }
 function countSetsAmount(sets){
   if(sets){
@@ -147,19 +103,15 @@ function countSetsAmount(sets){
     return 0;
   }
 }
-function deleteSetFromCurrent(setIndex) {
-  if (setIndex >= 0 && setIndex < currentExerciseSets.value.length) {
-    currentExerciseSets.value.splice(setIndex, 1);
-  } else {
-    console.error("Invalid index");
-  }
-}
 async function confirmSets(){
   console.log("sending data", JSON.stringify({
           allowedExercise: selectedOption.value,
           sets: currentExerciseSets.value
       }))
   try {
+    if (currentExerciseSets.value.length  <= 0) {
+      throw new Error('Ошибка при отправки подхода');
+    }
     const response = await fetch(`https://localhost:8443/calendar/${route.params.date}/${route.params.workoutId}/new`,  {
       method: 'POST',
       headers: {
@@ -174,6 +126,7 @@ async function confirmSets(){
     if (!response.ok) {
       throw new Error('Ошибка при отправки подхода')
     } else {
+      loadTrainings();
       isModalOpen.value = false;
     }
   } catch (error) {
@@ -182,9 +135,61 @@ async function confirmSets(){
 }
 function cancel(){
   if (currentExerciseSets.value.length > 0) {
-    alert("Data will be lost");
-  } else {
-    isModalOpen.value = false;
+    const userConfirmed = confirm("Data will be lost. Continue?");
+    if (!userConfirmed) {
+      return;
+    }
+  }
+  isModalOpen.value = false;
+}
+async function deleteExerciseFromWorkout(){
+  const userConfirmed = confirm("Are u sure? Continue?");
+  if (!userConfirmed) {
+    return;
+  }
+  console.log("sending data to delete(raw)", exerciseRef.value)
+  console.log("sending data to delete", JSON.stringify({
+    sets: exerciseRef.value.sets,
+    workoutExerciseId: exerciseRef.value.workoutExerciseId,
+}))
+  try {
+    const response = await fetch(`https://localhost:8443/calendar/${route.params.date}/${route.params.workoutId}/exercise`,  {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          sets: exerciseRef.value.sets,
+          workoutExerciseId: exerciseRef.value.workoutExerciseId,
+      }),
+      credentials: 'include' // Обязательно для работы с куками
+    })
+    if (!response.ok) {
+      throw new Error('Ошибка при отправки подхода')
+    } else {
+      console.log("response:", await response.json());
+      loadTrainings();
+      isModalOpen.value = false;
+    }
+  } catch (error) {
+    console.error('Ошибка:', error)
   }
 }
+function editWorkoutExercise(exercise){
+  isModalOpen.value = true;
+  selectedOption.value =dropdownOptions.value.find(option => option.name === exercise.exerciseName) || null;
+  console.log("selected option",selectedOption.value);
+  currentExerciseSets.value = exercise.sets;
+  openModal( 'Редактирование', 'Сохранить', 'Отменить');
+  showDeleteButton.value = true;
+  console.log("selected exercise",exercise);
+  exerciseRef.value = exercise;
+};
+function openModal(modalTitleStr, confirmTextStr, cancelTextStr){
+  modalTitle.value = modalTitleStr;
+  confirmText.value = confirmTextStr;
+  cancelText.value = cancelTextStr;
+  isModalOpen.value = true;
+}
+
 </script>
