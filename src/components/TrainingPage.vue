@@ -27,18 +27,18 @@
         </ul>
       </div>
       <div class="add-button-container">
-        <button class="circle-button" @click="openModal('Добавить  упражнения', 'Сохранить', 'Отменить')">
+        <button class="circle-button" @click="openModalAdd('Добавить  упражнения', 'Сохранить', 'Отменить')">
           <img src="/src/assets/icons/add_button.svg" alt="Добавить" />
         </button>
         <ExerciseModal
-          v-model:modelValue="isModalOpen"
+          ref="exerciseModal"
           v-model:selectedOption="selectedOption"
           :modalTitle="modalTitle"
           :confirmText="confirmText"
           :cancelText="cancelText"
           v-model:dropdownOptions="dropdownOptions"
           v-model:currentExerciseSets="currentExerciseSets"
-          :handleConfirm="confirmSets"
+          :handleConfirm="confirmSetsType"
           :handleCancel="cancel"
           v-model:showDeleteButton="showDeleteButton"
           :handleDeleteButton="deleteExerciseFromWorkout"
@@ -57,7 +57,6 @@ const route = useRoute();
 const jsonExercises = ref([]);
 const selectedOption = ref(null);
 const dropdownOptions = ref([]);
-const isModalOpen = ref(false);
 const currentExerciseSets = ref([])
 const expandedIndex = ref(null);
 const modalTitle = ref('');
@@ -65,6 +64,10 @@ const confirmText = ref('');
 const cancelText = ref('');
 const showDeleteButton = ref(false);
 const exerciseRef = ref(null);
+
+const exerciseModal = ref(null);
+const modalType = ref("");
+
 const toggleSet = (index) => {
   if (expandedIndex.value === index) {
     expandedIndex.value = null;
@@ -103,6 +106,15 @@ function countSetsAmount(sets){
     return 0;
   }
 }
+async function confirmSetsType() {
+  if(modalType.value === "add"){
+    await confirmSets();
+  } else if (modalType.value === "edit"){
+    await confirmSetsEdit();
+  } else {
+    console.error("Wrong modal Type", modalType.value);
+  }
+}
 async function confirmSets(){
   console.log("sending data", JSON.stringify({
           allowedExercise: selectedOption.value,
@@ -127,7 +139,35 @@ async function confirmSets(){
       throw new Error('Ошибка при отправки подхода')
     } else {
       loadTrainings();
-      isModalOpen.value = false;
+      exerciseModal.value?.closeModal();
+    }
+  } catch (error) {
+    console.error('Ошибка:', error)
+  }
+}
+async function confirmSetsEdit(){
+  console.log("sending data", JSON.stringify({
+        "sets": currentExerciseSets.value
+    }))
+  try {
+    if (currentExerciseSets.value.length  <= 0) {
+      throw new Error('Ошибка при отправки подхода');
+    }
+    const response = await fetch(`https://localhost:8443/calendar/${route.params.date}/${route.params.workoutId}/${exerciseRef.value.workoutExerciseId}`,  {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "sets": currentExerciseSets.value
+    }),
+      credentials: 'include' // Обязательно для работы с куками
+    })
+    if (!response.ok) {
+      throw new Error('Ошибка при отправки подхода')
+    } else {
+      loadTrainings();
+      exerciseModal.value?.closeModal();
     }
   } catch (error) {
     console.error('Ошибка:', error)
@@ -140,7 +180,7 @@ function cancel(){
       return;
     }
   }
-  isModalOpen.value = false;
+  exerciseModal.value?.closeModal();
 }
 async function deleteExerciseFromWorkout(){
   const userConfirmed = confirm("Are u sure? Continue?");
@@ -169,27 +209,34 @@ async function deleteExerciseFromWorkout(){
     } else {
       console.log("response:", await response.json());
       loadTrainings();
-      isModalOpen.value = false;
+      exerciseModal.value?.closeModal();
     }
   } catch (error) {
     console.error('Ошибка:', error)
   }
 }
 function editWorkoutExercise(exercise){
-  isModalOpen.value = true;
+  exerciseModal.value?.openModal();
   selectedOption.value =dropdownOptions.value.find(option => option.name === exercise.exerciseName) || null;
   console.log("selected option",selectedOption.value);
   currentExerciseSets.value = exercise.sets;
+  modalType.value = "edit";
   openModal( 'Редактирование', 'Сохранить', 'Отменить');
   showDeleteButton.value = true;
   console.log("selected exercise",exercise);
   exerciseRef.value = exercise;
 };
+function openModalAdd(modalTitleStr, confirmTextStr, cancelTextStr){
+  modalType.value = "add"; 
+  openModal(modalTitleStr, confirmTextStr, cancelTextStr);
+}
 function openModal(modalTitleStr, confirmTextStr, cancelTextStr){
   modalTitle.value = modalTitleStr;
   confirmText.value = confirmTextStr;
   cancelText.value = cancelTextStr;
-  isModalOpen.value = true;
+  exerciseModal.value?.openModal();
 }
-
+watch(modalType, (newValue, oldValue) => {
+  console.log(`modalType изменен с ${oldValue} на ${newValue}`);
+});
 </script>

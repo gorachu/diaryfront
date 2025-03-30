@@ -1,6 +1,6 @@
 <template>
     <vue-final-modal
-      :model-value="modelValue"
+      :model-value="isVisible"
       @closed="afterClose"
       @click-outside="handleCancel"
       :click-to-close="false"
@@ -73,15 +73,16 @@
   </template>
   
   <script setup>
-  import { defineProps, defineEmits, ref, onMounted } from 'vue'; 
+  import { defineProps, defineExpose, ref, onMounted } from 'vue'; 
   import Vue3Select from 'vue3-select';
   import 'vue3-select/dist/vue3-select.css';
   import RepAdder from './SetAdder.vue';
 
+  const isVisible = ref(false);
+
   const weightTotal = ref(0);
   const amountTotal = ref(0);
 
-  const modelValue = defineModel('modelValue');
   const selectedOption = defineModel('selectedOption');
   const dropdownOptions = defineModel('dropdownOptions');
   const currentExerciseSets = defineModel('currentExerciseSets');
@@ -93,7 +94,6 @@
   const targetedSpot = ref(-2);
 
   defineProps({
-  modelValue: Boolean, 
   modalTitle: String,
   confirmText: String,    
   cancelText: String,     
@@ -186,4 +186,15 @@ onMounted(() => {
     sortableList.value.addEventListener("drop", drop);
   }
 });
+const openModal = () => {
+  isVisible.value = true;
+};
+
+const closeModal = () => {
+  isVisible.value = false;
+};
+defineExpose({
+    openModal,
+    closeModal,
+  });
 </script>
