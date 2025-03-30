@@ -180,6 +180,7 @@ function cancel(){
       return;
     }
   }
+  loadTrainings();
   exerciseModal.value?.closeModal();
 }
 async function deleteExerciseFromWorkout(){
