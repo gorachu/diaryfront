@@ -1,0 +1,37 @@
+.training-info{
+    
+}
+.training-info-row{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+.training-description{
+    width: 100%;
+    min-height: 60px;
+    padding: 8px; 
+    resize: vertical;
+}
+.training-textarea{
+    width: 100%;
+    min-height: 60px;
+    max-height: 200px;
+    padding: 8px; 
+    resize: none;
+    border: none;
+    border-radius: 0px;
+    box-sizing: border-box
+}
+.char-count {
+    font-size: 14px;
+    color: gray;
+    text-align: right;
+    margin-top: 5px;
+}
+.training-text-area{
+    min-height: 60px;
+    max-height: 200px;
+    padding: 8px; 
+    border-radius: 5px;
+    border: 2px solid #4CAF50;
+    box-sizing: border-box
+}
