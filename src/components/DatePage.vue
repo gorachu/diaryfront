@@ -9,8 +9,8 @@
         <div class="training-info column">
           <p class="training-info-row">⏳ Длительность: {{calculateDuration(training.timeStart, training.timeEnd)}}</p>
           <p class="training-info-row">Количество упражнений: {{training.workoutExercises.length}}</p>
+          <label class="training-info-row">Описание проведенной тренировки:</label>
           <div class="training-info-row column training-text-area">
-            <label>Описание проведенной тренировки:</label>
             <textarea 
               v-model="training.notes" 
               placeholder="Напишите, как прошла тренировка..." 
