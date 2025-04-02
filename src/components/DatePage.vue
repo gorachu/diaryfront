@@ -5,6 +5,9 @@
         <div class="header-button-container">  
           <h4 class="training-time-header">{{ training.timeStart }} - {{ training.timeEnd }}</h4>
           <button class="edit-button" @click="editClick(training.workoutId)">К упражнениям</button>
+          <button class="edit-workout-button" @click.stop="openWorkoutEditModal(training)">
+            <img src="/src/assets/icons/edit_button.svg" alt="edit button">
+          </button>
         </div>
         <div class="training-info column">
           <p class="training-info-row">⏳ Длительность: {{calculateDuration(training.timeStart, training.timeEnd)}}</p>
@@ -26,6 +29,13 @@
           <img src="/src/assets/icons/add_button.svg" alt="Добавить" />
         </button>
       </div>
+      <WorkoutChangeModal
+        ref="exerciseModal"
+        :training="selectedTraining"
+        :handleConfirm="handleConfirm"
+        :handleCancel="handleCancel"
+        :handleDelete="handleDelete"
+      />
   </div>
 </template>
 
@@ -35,8 +45,13 @@ import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { onMounted, ref } from 'vue'
 import '../assets/styles/DatePage.css'
+import WorkoutChangeModal from './WorkoutChangeModal.vue';
 const jTrainings = ref([]);
 const router = useRouter();
+
+const exerciseModal = ref(null);
+const selectedTraining = ref(null);
+
 onMounted(loadTrainings)
 async function loadTrainings() {
   try {
@@ -86,7 +101,7 @@ async function onInputFinished(training){
           notes: training.notes,
       }),);
   try {
-    const response = await fetch(`https://localhost:8443/calendar/workouts/${training.workoutId}`,  {
+    const response = await fetch(`https://localhost:8443/calendar/workouts/${selectedTraining.workoutId}`,  {
       method: 'PATCH',
       headers: {
         'Accept': 'application/json',
@@ -128,5 +143,79 @@ async function createNewTraining() {
   } catch (error){
     console.error('Ошибка:', error)
   }
+}
+function openWorkoutEditModal(training){
+  exerciseModal.value?.openModal();
+  selectedTraining.value = training;
+  console.log("training:", selectedTraining.value);
+}
+async function updateTraining() {
+  console.log("Json: ",);
+
+  console.log("Json: ", JSON.stringify({
+        date: exerciseModal.value?.getLocalTrainingDay(),
+        notes: "",
+        endTime: exerciseModal.value?.getLocalEndTime(),
+        startTime: "",
+        workoutId: selectedTraining.value.workoutId
+      }),);
+  try {
+    const response = await fetch(`https://localhost:8443/calendar/workouts/${selectedTraining.value.workoutId}`,  {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        date: exerciseModal.value?.getLocalTrainingDay(),
+        notes: "",
+        endTime: exerciseModal.value?.getLocalEndTime(),
+        startTime: "",
+        workoutId: selectedTraining.value.workoutId
+      }),
+      credentials: 'include',
+    })
+    if (!response.ok) {
+      throw new Error('Ошибка загрузки тренировок')
+    } else {
+      loadTrainings();
+      const res = await response.json()
+      console.log(res);
+    }
+  } catch (error){
+    console.error('Ошибка:', error)
+  }
+}
+async function deleteTraining(){
+  try {
+    const response = await fetch(`https://localhost:8443/calendar/workouts/${selectedTraining.value.workoutId}`,  {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      },
+      credentials: 'include',
+    })
+    if (!response.ok) {
+      throw new Error('Ошибка загрузки тренировок')
+    } else {
+      loadTrainings();
+      const res = await response.json()
+      console.log(res);
+    }
+  } catch (error){
+    console.error('Ошибка:', error)
+  }
+}
+
+async function handleConfirm(){
+  updateTraining();
+  exerciseModal.value?.closeModal();
+}
+
+function handleCancel(){
+  exerciseModal.value?.closeModal();
+}
+function handleDelete(){
+  deleteTraining();
+  exerciseModal.value?.closeModal();
 }
 </script>

@@ -287,3 +287,15 @@
   justify-content: center;
   margin-bottom: 5px;
 }
+.edit-workout-button{
+  margin-left: 10px;
+}
+.edit-workout-button img{
+  height: 20px;
+  object-fit: contain;
+}
+.edit-workout-button:hover{
+  background-color: rgb(217, 217, 217);
+  transform: scale(1.05);
+
+}

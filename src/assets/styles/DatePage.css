@@ -32,6 +32,9 @@
     max-height: 200px;
     padding: 8px; 
     border-radius: 5px;
-    border: 2px solid #4CAF50;
+    border: 2px solid #4caf4f17;
     box-sizing: border-box
+}
+.training-text-area:hover{
+    border-color: #4caf4f9d;
 }
