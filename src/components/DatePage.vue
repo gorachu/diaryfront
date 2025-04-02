@@ -4,11 +4,11 @@
       <div class="single-training-holder" v-for="training in jTrainings.trainingsInDay">
         <div class="header-button-container">  
           <h4 class="training-time-header">{{ training.timeStart }} - {{ training.timeEnd }}</h4>
-          <button class="edit-button" @click="editClick(training.workoutId)">Редактировать</button>
+          <button class="edit-button" @click="editClick(training.workoutId)">К упражнениям</button>
         </div>
         <div class="training-info column">
           <p class="training-info-row">⏳ Длительность: {{calculateDuration(training.timeStart, training.timeEnd)}}</p>
-          <p class="training-info-row">Количество упражнений: {{training.workoutExercises.length}}</p>
+          <p class="training-info-row">Количество упражнений: {{training.workoutExercises?.length}}</p>
           <label class="training-info-row">Описание проведенной тренировки:</label>
           <div class="training-info-row column training-text-area">
             <textarea 
@@ -20,6 +20,11 @@
             <p class="char-count" v-if="training.notes?.length">{{ training.notes.length }} / 800</p>
           </div>
         </div>
+      </div>
+      <div class="add-button-container">
+        <button class="circle-button" @click="createNewTraining()">
+          <img src="/src/assets/icons/add_button.svg" alt="Добавить" />
+        </button>
       </div>
   </div>
 </template>
@@ -100,5 +105,28 @@ async function onInputFinished(training){
     console.error('Ошибка:', error)
   }
 }
-
+async function createNewTraining() {
+  try {
+    const response = await fetch(`https://localhost:8443/calendar/${route.params.date}/new`,  {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        date: new Date(route.params.date).toISOString().split("T")[0],
+        startTime: new Date().toTimeString().split(" ")[0],
+      }),
+      credentials: 'include',
+    })
+    if (!response.ok) {
+      throw new Error('Ошибка загрузки тренировок')
+    } else {
+      loadTrainings();
+      const res = await response.json()
+      console.log(res);
+    }
+  } catch (error){
+    console.error('Ошибка:', error)
+  }
+}
 </script>

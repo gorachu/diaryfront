@@ -22,31 +22,30 @@
     </template>
     <template #day-popover="{day, attributes}">
       <div class="popover-content">
-        <div v-for="attr in attributes" :key="attr.key">
-          <div v-if="attr.key === 'training-days'">
-            <div v-for="data in attr.customData.days">
-              <div v-if="data.date === formatDate(day.date)">
-                <h4>Тренировки за {{data.date}}:</h4>
-                  <ul>
-                    <li v-for="workoutsTiming in data.workoutsTimings">
-                      {{ workoutsTiming.startTime + " - " + workoutsTiming.endTime }}                    
-                    </li>
-                  </ul>
-              </div>
+        <div v-if="trainingDaysAttr">
+          <div v-for="data in trainingDaysAttr.customData.days" :key="data.date">
+            <div v-if="data.date === formatDate(day.date)">
+              <h4>Тренировки за {{data.date}}:</h4>
+              <ul>
+                <li v-for="(workoutsTiming, index) in data.workoutsTimings" :key="index">
+                  {{ workoutsTiming.startTime + " - " + workoutsTiming.endTime }}                    
+                </li>
+              </ul>
             </div>
           </div>
-        </div>   
+        </div>
+        
         <button 
-                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold w-full px-3 py-1 rounded-md"
-                @click="goToTrainingPage(day)"
-                >Просмотр тренировок
-              </button>
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold w-full px-3 py-1 rounded-md"
+          @click="goToTrainingPage(day)"
+          >Просмотр тренировок
+        </button>
       </div>
     </template>
   </VCalendar>
 </template>
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import '../assets/styles/Calendar.css';
 import { useRouter } from 'vue-router'
 
@@ -127,7 +126,19 @@ const attrs = ref([
       new Date(),
     ]
   },
+  {
+    key: 'all-dates',
+    dates: { start: '0001-01-01', end: new Date() },
+    popover:{
+      visibility: 'hover-focus',
+      isInteractive: true,
+      hideIndicator: true,
+    },
+  },
 ]);
+const trainingDaysAttr = computed(() => {
+      return attrs.value.find(attr => attr.key === 'training-days');
+    });
 watch(selectedDate, (newDate) => {
   const selectedDateAttr = attrs.value.find(attr => attr.key === 'selectedDate');
   if (selectedDateAttr) {
